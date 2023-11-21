@@ -1,0 +1,11 @@
+version: '3.1'
+name: 'si'
+services:
+  db:
+    image: mongo:latest
+    restart: unless-stopped
+    container_name: db
+    ports:
+      - 27017:27017
+    volumes:
+      - ./data/db:/data/db
