@@ -1,12 +1,37 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "./components/custom/navbar";
 import { Outlet } from "react-router-dom";
 import FilterIcon from "./icons/filter";
 import Dropdown from "./components/custom/dropdown";
+import { FancyMultiSelect } from "./components/ui/multi-select";
 
 function App() {
-  const [partai, setPartai] = useState([]);
-  const [cluster, setCluster] = useState([]);
+  const [partai, setPartai] = useState<{ label: string; value: string }[]>([]);
+  const [cluster, setCluster] = useState<{ label: string; value: string }[]>(
+    []
+  );
+
+  useEffect(() => {
+    asyncFetch();
+  }, []);
+
+  function asyncFetch() {
+    fetch("http://127.0.0.1:5000/partais")
+      .then((res) => res.json())
+      .then((res) =>
+        setPartai(
+          res.map((partai: string[]) => ({ label: partai, value: partai }))
+        )
+      );
+    fetch("http://127.0.0.1:5000/clusters")
+      .then((res) => res.json())
+      .then((res) =>
+        setCluster(
+          res.map((cluster: string[]) => ({ label: cluster, value: cluster }))
+        )
+      );
+  }
+
   return (
     <div className="w-full h-full grid grid-cols-sidebar grid-rows-navbar ">
       <Navbar />
@@ -19,21 +44,9 @@ function App() {
           <div className="space-y-4">
             <div>
               <p>Partai</p>
+              <FancyMultiSelect />
               <Dropdown
-                items={[
-                  {
-                    label: "SEMUA",
-                    value: "SEMUA",
-                  },
-                  {
-                    label: "PPP",
-                    value: "PPP",
-                  },
-                  {
-                    label: "PAN",
-                    value: "PAN",
-                  },
-                ]}
+                items={partai}
                 onChange={(value) => {
                   console.log(value);
                 }}
@@ -43,20 +56,7 @@ function App() {
             <div>
               <p>Cluster</p>
               <Dropdown
-                items={[
-                  {
-                    label: "SEMUA",
-                    value: "SEMUA",
-                  },
-                  {
-                    label: "PPP",
-                    value: "PPP",
-                  },
-                  {
-                    label: "PAN",
-                    value: "PAN",
-                  },
-                ]}
+                items={cluster}
                 onChange={(value) => {
                   console.log(value);
                 }}
@@ -66,9 +66,9 @@ function App() {
           </div>
         </div>
       </div>
-        <div className="p-4 flex-1">
-          <Outlet context={{ partai, cluster }} />
-        </div>
+      <div className="p-4 flex-1">
+        <Outlet context={{ partai, cluster }} />
+      </div>
     </div>
   );
 }

@@ -9,7 +9,12 @@ const ScatterPlotPage = () => {
   }, []);
 
   const asyncFetch = () => {
-    fetch("https://gw.alipayobjects.com/os/antfincdn/aao6XnO5pW/IMDB.json")
+    fetch(
+      "http://127.0.0.1:5000/scatterplot?" +
+        new URLSearchParams({
+          partai: undefined,
+        })
+    )
       .then((response) => response.json())
       .then((json) => setData(json))
       .catch((error) => {
