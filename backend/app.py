@@ -24,9 +24,15 @@ def get_scatterplot():
     partai = None
     cluster = None
     if "partai" in args:
-        partai = args.get("partai").split(",")
+        if args.get("partai") == "":
+            partai = []
+        else:
+            partai = args.get("partai").split(",")
     if "cluster" in args:
-        cluster = args.get("cluster").split(",")
+        if args.get("cluster") == "":
+            cluster = []
+        else:
+            cluster = list(map(int, args.get("cluster").split(",")))
     return jsonify(get_data.get_scatterplot(partai, cluster))
 
 
@@ -37,9 +43,15 @@ def get_table():
     partai = None
     cluster = None
     if "partai" in args:
-        partai = args.get("partai").split(",")
+        if args.get("partai") == "":
+            partai = []
+        else:
+            partai = args.get("partai").split(",")
     if "cluster" in args:
-        cluster = args.get("cluster").split(",")
+        if args.get("cluster") == "":
+            cluster = []
+        else:
+            cluster = list(map(int, args.get("cluster").split(",")))
     return jsonify(get_data.get_table(partai, cluster))
 
 
@@ -49,11 +61,16 @@ def get_piechart():
     args = request.args
     partai = None
     cluster = None
-    type = "cluster"
     if "partai" in args:
-        partai = args.get("partai").split(",")
+        if args.get("partai") == "":
+            partai = []
+        else:
+            partai = args.get("partai").split(",")
     if "cluster" in args:
-        cluster = args.get("cluster").split(",")
+        if args.get("cluster") == "":
+            cluster = []
+        else:
+            cluster = list(map(int, args.get("cluster").split(",")))
     if "type" in args:
         type = args.get("type")
     return jsonify(get_data.get_piechart(partai, cluster, type))
@@ -66,9 +83,15 @@ def get_barchart():
     partai = None
     cluster = None
     if "partai" in args:
-        partai = args.get("partai").split(",")
+        if args.get("partai") == "":
+            partai = []
+        else:
+            partai = args.get("partai").split(",")
     if "cluster" in args:
-        cluster = args.get("cluster").split(",")
+        if args.get("cluster") == "":
+            cluster = []
+        else:
+            cluster = list(map(int, args.get("cluster").split(",")))
     return jsonify(get_data.get_barchart(partai, cluster))
 
 

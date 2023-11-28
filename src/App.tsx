@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import Navbar from "./components/custom/navbar";
 import { Outlet } from "react-router-dom";
 import FilterIcon from "./icons/filter";
-import Dropdown from "./components/custom/dropdown";
 import { FancyMultiSelect } from "./components/ui/multi-select";
 
 function App() {
@@ -10,6 +9,8 @@ function App() {
   const [cluster, setCluster] = useState<{ label: string; value: string }[]>(
     []
   );
+  const [selectedPartai, setSelectedPartai] = useState<string[]>([]);
+  const [selectedCluster, setSelectedCluster] = useState<string[]>([]);
 
   useEffect(() => {
     asyncFetch();
@@ -35,7 +36,7 @@ function App() {
   return (
     <div className="w-full h-full grid grid-cols-sidebar grid-rows-navbar ">
       <Navbar />
-      <div className="text-gray-900 grid grid-cols-sidebar">
+      <div className="text-gray-900 grid grid-cols-sidebar hide-print">
         <div className="bg-white p-4 text-slate-600 flex-1">
           <div className="flex flex-row items-center gap-2 mb-3">
             <FilterIcon />
@@ -44,30 +45,29 @@ function App() {
           <div className="space-y-4">
             <div>
               <p>Partai</p>
-              <FancyMultiSelect />
-              <Dropdown
+              <FancyMultiSelect
                 items={partai}
-                onChange={(value) => {
-                  console.log(value);
-                }}
-                defaultValue="SEMUA"
+                onChange={setSelectedPartai}
+                placeholder="Pilih Partai..."
+                defaultValue={partai.map((p) => p.value)}
               />
             </div>
             <div>
               <p>Cluster</p>
-              <Dropdown
+              <FancyMultiSelect
                 items={cluster}
-                onChange={(value) => {
-                  console.log(value);
-                }}
-                defaultValue="SEMUA"
+                onChange={setSelectedCluster}
+                placeholder="Pilih Cluster..."
+                defaultValue={cluster.map((p) => p.value)}
               />
             </div>
           </div>
         </div>
       </div>
       <div className="p-4 flex-1">
-        <Outlet context={{ partai, cluster }} />
+        <Outlet
+          context={{ cluster: selectedCluster, partai: selectedPartai }}
+        />
       </div>
     </div>
   );

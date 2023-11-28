@@ -22,10 +22,11 @@ const navItems = [
 const Navbar = () => {
   const location = useLocation();
   return (
-    <div className="flex flex-row bg-slate-800 w-full h-14 px-8 gap-6 items-stretch col-span-2">
+    <div className="flex flex-row bg-slate-800 w-full h-14 px-8 gap-6 items-stretch col-span-2 hide-print">
       {navItems.map((item) => {
         return (
           <Link
+            key={item.path}
             to={item.path}
             className="grid place-items-center cursor-pointer group"
           >

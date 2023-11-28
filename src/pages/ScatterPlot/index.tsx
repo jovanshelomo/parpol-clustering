@@ -1,33 +1,57 @@
+import { ScatterConfig } from "@ant-design/charts";
 import { Scatter } from "@ant-design/plots";
 import { useEffect, useState } from "react";
+import { useOutletContext } from "react-router-dom";
+import { uniq } from "@antv/util";
 
 const ScatterPlotPage = () => {
   const [data, setData] = useState([]);
+  const { partai, cluster } = useOutletContext<{
+    partai: string[];
+    cluster: string[];
+  }>();
 
   useEffect(() => {
-    asyncFetch();
-  }, []);
-
-  const asyncFetch = () => {
     fetch(
       "http://127.0.0.1:5000/scatterplot?" +
         new URLSearchParams({
-          partai: undefined,
+          partai: partai.join(","),
+          cluster: cluster.join(","),
         })
     )
       .then((response) => response.json())
-      .then((json) => setData(json))
-      .catch((error) => {
-        console.log("fetch data failed", error);
-      });
-  };
-  const config = {
+      .then((json) => setData(json));
+  }, [partai, cluster]);
+
+  const config: ScatterConfig = {
     appendPadding: 10,
     data,
-    xField: "Revenue (Millions)",
-    yField: "Rating",
-    shape: "circle",
-    colorField: "Genre",
+    xField: "engagement_total",
+    yField: "views",
+    shape: (data1) => {
+      const shapes = [
+        "circle",
+        "square",
+        "triangle",
+        "diamond",
+        "hexagon",
+        "bowtie",
+        "cross",
+        "tick",
+        "plus",
+        "hyphen",
+        "line",
+      ];
+      // const idx = uniq(data.map((d) => d.label)).indexOf(label);
+      // console.log(data1);
+      return "circle";
+    },
+    colorField: "cluster",
+    onEvent(chart, event) {
+      if (event.type === "point:click") {
+        window.open(event?.data?.data.url_video, "_blank")?.focus();
+      }
+    },
     size: 4,
     yAxis: {
       nice: true,
@@ -38,7 +62,8 @@ const ScatterPlotPage = () => {
       },
     },
     xAxis: {
-      min: -100,
+      nice: true,
+      min: 0,
       grid: {
         line: {
           style: {

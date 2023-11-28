@@ -89,44 +89,58 @@ def get_table(partai=None, cluster=None):
         if clusters == []:
             get_clusters()
         cluster = clusters
-    result = parse_json(coll.aggregate([
-        {
-            '$match': {
-                'label': {
-                    '$in': partai
-                },
-                'cluster': {
-                    '$in': cluster
-                }
-            }
-        }, {
-            '$group': {
-                '_id': {
-                    'label': '$label',
-                    'cluster': '$cluster'
-                },
-                'count': {
-                    '$sum': 1
-                }
-            }
-        }, {
-            '$group': {
-                '_id': '$_id.label',
-                'clusters': {
-                    '$push': {
-                        'cluster': '$_id.cluster',
-                        'count': '$count'
+    if len(partai) == 1:
+        result = parse_json(coll.aggregate([
+            {
+                '$match': {
+                    'label': {
+                        '$in': partai
+                    },
+                    'cluster': {
+                        '$in': cluster
                     }
                 }
             }
-        }, {
-            '$project': {
-                '_id': 0,
-                'label': '$_id',
-                'clusters': 1
+        ]))
+    else:
+        result = parse_json(coll.aggregate([
+            {
+                '$match': {
+                    'label': {
+                        '$in': partai
+                    },
+                    'cluster': {
+                        '$in': cluster
+                    }
+                }
+            }, {
+                '$group': {
+                    '_id': {
+                        'label': '$label',
+                        'cluster': '$cluster'
+                    },
+                    'count': {
+                        '$sum': 1
+                    }
+                }
+            }, {
+                '$group': {
+                    '_id': '$_id.label',
+                    'clusters': {
+                        '$push': {
+                            'cluster': '$_id.cluster',
+                            'count': '$count'
+                        }
+                    }
+                }
+            }, {
+                '$project': {
+                    '_id': 0,
+                    'label': '$_id',
+                    'clusters': 1
+                }
             }
-        }
-    ]))
+        ]))
     return result
 
 
@@ -204,9 +218,9 @@ def get_piechart(partai=None, cluster=None, type="cluster"):
             }, {
                 '$group': {
                     '_id': '$_id.cluster',
-                    'partais': {
+                    'labels': {
                         '$push': {
-                            'partai': '$_id.label',
+                            'label': '$_id.label',
                             'count': '$count'
                         }
                     }
@@ -215,7 +229,7 @@ def get_piechart(partai=None, cluster=None, type="cluster"):
                 '$project': {
                     '_id': 0,
                     'cluster': '$_id',
-                    'partais': 1
+                    'labels': 1
                 }
             }
         ]))
